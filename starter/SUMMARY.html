@@ -333,11 +333,11 @@
                 <h2>Model Architecture Optimization</h2>
                 <p>To maximize representation capacity within the parameter constraints, several transformer improvements were implemented:</p>
                 <ul>
-                    <li><strong>7-Layer Architecture</strong>: Increasing network depth ($L=7$, $d_{model}=128$) improves hierarchical representation compared to the shallow baseline.</li>
+                    <li><strong>7-Layer Architecture</strong>: Increasing network depth (L=7, d_model=128) improves hierarchical representation compared to the shallow baseline.</li>
                     <li><strong>Weight Tying</strong>: Embedding weights are tied directly with the output language modeling head. The redundant weight matrix is stripped from the saved checkpoint to prevent double-counting of parameters, and restored transparently on loading.</li>
                     <li><strong>Rotary Positional Embeddings (RoPE)</strong>: Parameter-free relative positional encodings replace absolute position tables, saving 16,384 parameters and improving context length generalization.</li>
                     <li><strong>RMSNorm</strong>: Replaces LayerNorm to speed up computation and save parameter bias terms.</li>
-                    <li><strong>SwiGLU Activation</strong>: Llama-style gated SiLU activations in the MLP block with $d_{ff} \approx \frac{8}{3}d_{model}$ to increase model capacity.</li>
+                    <li><strong>SwiGLU Activation</strong>: Llama-style gated SiLU activations in the MLP block with d_ff = 8/3 * d_model to increase model capacity.</li>
                     <li><strong>Bias-Free Layers</strong>: Biases in all linear projection layers are removed.</li>
                 </ul>
             </div>

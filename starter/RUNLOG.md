@@ -8,7 +8,7 @@ This log documents the systematic, step-by-step experimental approach taken to o
 * **Hypothesis**: The baseline model underperforms because:
   1. Raw byte tokenization forces Hindi (Devanagari) characters to be represented as 3 bytes (3 tokens), exhausting the 128-token context window extremely fast.
   2. The optimizer (Adam) uses a static learning rate (3e-4) without warmup or decay, causing training to stall.
-  3. Untied embedding and language modeling head weights waste a massive amount of parameters ($4096 \times d_{model}$ each).
+  3. Untied embedding and language modeling head weights waste a massive amount of parameters (4096 * d_model each).
 * **Configuration**: Raw byte tokenizer (vocab 256), 4 layers, 160 embedding dimension, 4 heads, constant LR (3e-4), batch size 8.
 * **Tied parameters**: 1,339,840
 * **Checkpoint parameters**: 1,339,840
@@ -63,11 +63,11 @@ This log documents the systematic, step-by-step experimental approach taken to o
 ---
 
 ## Run 4: Deep 7-Layer SwiGLU Model with Scaled Initialization (Final Configuration)
-* **Hypothesis**: We can reinvest our remaining 770k parameter budget to scale up depth from 4 layers to 7 layers ($d_{model} = 128$). Swapping GELU for SwiGLU will improve representations. We will scale initialization standard deviations by $1 / \sqrt{2L}$ to prevent vanishing/exploding gradients in a deep network.
+* **Hypothesis**: We can reinvest our remaining 770k parameter budget to scale up depth from 4 layers to 7 layers (d_model = 128). Swapping GELU for SwiGLU will improve representations. We will scale initialization standard deviations by 1 / sqrt(2 * L) to prevent vanishing/exploding gradients in a deep network.
 * **Changes**:
-  - Reinvested parameter budget: set $L=7$, $d_{model}=128$, $n_{head}=4$.
-  - Replaced GELU in MLP with SwiGLU (with $d_{ff} \approx \frac{8}{3}d_{model}$).
-  - Scaled initialization standard deviation by $1 / \sqrt{2 \times \text{layers}}$ at residual boundaries.
+  - Reinvested parameter budget: set L=7, d_model=128, n_head=4.
+  - Replaced GELU in MLP with SwiGLU (with d_ff = 8/3 * d_model).
+  - Scaled initialization standard deviation by 1 / sqrt(2 * layers) at residual boundaries.
   - Stripped `head.weight` from the checkpoint to prevent double-counting of parameters, and overrode `load_state_dict` to restore it on load.
 * **Tied parameters**: 1,901,568
 * **Checkpoint parameters**: 1,901,568 (strictly compliant; redundant head weights stripped)
