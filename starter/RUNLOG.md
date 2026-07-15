@@ -32,7 +32,7 @@ This log documents the systematic, step-by-step experimental approach taken to o
 
 ---
 
-## Run 2: Ambitious Failure — Weight Tying & RoPE (Diverged)
+## Run 2: Ambitious Failure: Weight Tying & RoPE (Diverged)
 * **Hypothesis**: We can immediately tie weights and implement parameter-free Rotary Position Embeddings (RoPE) to save parameter budget. Let's test if a higher learning rate of 3e-3 allows faster convergence.
 * **Changes**:
   - Enabled weight tying: `self.head.weight = self.tok_emb.weight`.
