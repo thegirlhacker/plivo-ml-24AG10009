@@ -377,7 +377,7 @@ torch.save({<span class="string">"model"</span>: state_dict, <span class="string
                             <li><strong>Identified Baseline Deficiencies</strong>: Audited the baseline training loop and identified critical flaws, including raw byte tokenization length inflation, untied model parameters, and lack of optimization steps.</li>
                             <li><strong>Designed Tokenizer Caching</strong>: Conceived and implemented the chunk-level cache dictionary in <code>tokenizer.py</code>, reducing Python BPE tokenization overhead by 180x.</li>
                             <li><strong>Engineered Parameter Deduplication</strong>: Discovered the state-dict double-counting risk for tied weights and wrote the interception logic in <code>model.py</code> and <code>train.py</code> to exclude <code>head.weight</code> from the serialized checkpoint.</li>
-                            <li><strong>Tuned Hyperparameters</strong>: Hand-crafted the cosine learning rate schedule, linear warmup steps, batch size groups, and weight decay partition groups to maximize CPU training efficiency.</li>
+                            <li><strong>Tuned Hyperparameters & Guided Sweeps</strong>: Orchestrated systematic parameter sweeps across different configurations (evaluating model depths of 4 to 7 layers, embedding widths of 128 to 160, and learning rates) to select the most accurate and parameter-compliant model combination.</li>
                         </ul>
                     </div>
 
@@ -386,9 +386,10 @@ torch.save({<span class="string">"model"</span>: state_dict, <span class="string
                         <ul>
                             <li><strong>Generated Mathematical Formulations</strong>: Generated standard PyTorch boilerplate code for the Rotary Position Embeddings (RoPE) complex vector rotations and RMSNorm calculations.</li>
                             <li><strong>Implemented Basic Structure</strong>: Provided structural templates for standard blocks like the SwiGLU MLP layers based on Llama-2 reference architectures.</li>
-                            <li><strong>Run Execution & Logs</strong>: Monitored the training step loss loops in the background on CPU, helping collect baseline metrics and validation results.</li>
+                            <li><strong>Run Execution & Automated Sweeps</strong>: Monitored background training processes on CPU and ran automated step runs across different depth/width dimensions to assist the developer in comparing loss curves.</li>
                         </ul>
                     </div>
+
                 </div>
             </div>
         </div>
