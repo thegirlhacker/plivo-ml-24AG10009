@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Speedrun Optimization Summary</title>
+    <title>LLM Speedrun Technical Report</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -244,68 +244,30 @@
         .function { color: #38bdf8; }
         .string { color: #34d399; }
         .comment { color: #64748b; }
-
-        /* Contribution block */
-        .contrib-split {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        @media (min-width: 768px) {
-            .contrib-split {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .contrib-card {
-            background: rgba(15, 23, 42, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-
-        .contrib-card h3 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.15rem;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .contrib-card h3.human {
-            color: var(--accent-teal);
-        }
-
-        .contrib-card h3.machine {
-            color: var(--accent-purple);
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>LLM SPEEDRUN OPTIMIZATION</h1>
-            <p class="subtitle">2,000 Step Benchmark Training on English + Hindi Mixed Corpus</p>
+            <h1>LLM SPEEDRUN REPORT</h1>
+            <p class="subtitle">Systematic Optimization of a Character-level Baseline to BPE 7L Transformer</p>
             <div class="badge-container">
-                <span class="badge badge-purple">1.9M Parameter Budget</span>
-                <span class="badge badge-teal">CPU ONLY / FROM SCRATCH</span>
+                <span class="badge badge-purple">1.9M Parameter Configuration</span>
+                <span class="badge badge-teal">CPU-only Training Run</span>
             </div>
         </header>
 
         <div class="grid">
-            <!-- Problem & Metrics -->
+            <!-- Performance Summary -->
             <div class="card grid-full">
-                <h2>Performance Summary</h2>
-                <p>By modernizing the tokenization scheme and model architecture, we achieved a massive reduction in Bits Per Byte (BPB) on the held-out dev evaluation text, outperforming the baseline by <strong>27%</strong>.</p>
+                <h2>Experimental Progress & Performance Summary</h2>
+                <p>This project optimizes a character-level LLM baseline within a strict budget of 2,000 optimization steps and 2,000,000 parameters. Through systematic tokenizer compression and structural model enhancements, the bits-per-byte (BPB) metric on the dev evaluation text was reduced by <strong>27%</strong>.</p>
                 
                 <div class="metric-table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th>Configuration</th>
+                                <th>Experimental Stage</th>
                                 <th>Vocab Size</th>
                                 <th>Model Params (Tied)</th>
                                 <th>Checkpoint Params (Saved)</th>
@@ -343,89 +305,60 @@
                                 <td>Compliant</td>
                             </tr>
                         </tbody>
-
                     </table>
                 </div>
             </div>
 
-            <!-- Architecture Changes -->
+            <!-- Model Architecture Details -->
             <div class="card">
-                <h2>Modernized Architecture</h2>
-                <p>We replaced the default mediocre transformer with state-of-the-art model layers:</p>
+                <h2>Model Architecture Optimization</h2>
+                <p>To maximize representation capacity within the parameter constraints, several transformer improvements were implemented:</p>
                 <ul>
-                    <li><strong>7-Layer Deep Model</strong>: Depth ($L=7$, $d_{model}=128$) maximizes hierarchical abstraction under the 2M parameter cap.</li>
-                    <li><strong>Weight Tying</strong>: Tied input embeddings and output head weights. To protect against direct checkpoint parameter counts, we physically strip the redundant <code>head.weight</code> from the file and reconstruct the tie transparently on loading.</li>
-                    <li><strong>Rotary Positional Embeddings (RoPE)</strong>: Replaced static embeddings with RoPE, saving parameter budget and enabling superior relative position tracking.</li>
-                    <li><strong>RMSNorm</strong>: Replaced standard LayerNorm with RMSNorm, speeding up training and saving parameter bias terms.</li>
-                    <li><strong>SwiGLU Activation</strong>: Implemented Llama-style SwiGLU MLP blocks with $d_{ff} \approx \frac{8}{3}d_{model}$ to boost block expressivity.</li>
-                    <li><strong>Bias-Free Linear layers</strong>: Removed all bias projections in QKV, output proj, and MLP layers to optimize parameters.</li>
+                    <li><strong>7-Layer Architecture</strong>: Increasing network depth ($L=7$, $d_{model}=128$) improves hierarchical representation compared to the shallow baseline.</li>
+                    <li><strong>Weight Tying</strong>: Embedding weights are tied directly with the output language modeling head. The redundant weight matrix is stripped from the saved checkpoint to prevent double-counting of parameters, and restored transparently on loading.</li>
+                    <li><strong>Rotary Positional Embeddings (RoPE)</strong>: Parameter-free relative positional encodings replace absolute position tables, saving 16,384 parameters and improving context length generalization.</li>
+                    <li><strong>RMSNorm</strong>: Replaces LayerNorm to speed up computation and save parameter bias terms.</li>
+                    <li><strong>SwiGLU Activation</strong>: Llama-style gated SiLU activations in the MLP block with $d_{ff} \approx \frac{8}{3}d_{model}$ to increase model capacity.</li>
+                    <li><strong>Bias-Free Layers</strong>: Biases in all linear projection layers are removed.</li>
                 </ul>
             </div>
 
             <!-- Tokenizer Optimization -->
             <div class="card">
-                <h2>Custom BPE Tokenizer</h2>
-                <p>The default byte tokenizer splits Hindi characters into 3 tokens. We loaded a custom <strong>4,096-vocabulary Byte-Pair Encoding (BPE)</strong> tokenizer trained only on the training corpus:</p>
+                <h2>Tokenizer & Data Compression</h2>
+                <p>Raw byte tokenization splits Hindi characters into 3 separate tokens, exhausting the 128-token context window rapidly. We trained a custom <strong>4,096-vocabulary Byte-Pair Encoding (BPE)</strong> tokenizer on the training corpus:</p>
                 <ul>
-                    <li><strong>Compression Win</strong>: Compresses 159,225 bytes of text into just 65,953 BPE tokens—achieving a **2.41x compression ratio** (bytes/token).</li>
-                    <li><strong>Expanded Context Window</strong>: Since 1 token represents ~2.41 bytes, our block size of 128 tokens covers **309 characters of text** (a 2.4x expansion over the baseline context window).</li>
-                    <li><strong>Guaranteed Losslessness</strong>: Uses a byte-level fallback for unseen UTF-8 characters, ensuring <code>decode(encode(text)) == text</code> is structurally guaranteed.</li>
-                    <li><strong>Caching Optimization</strong>: Implemented an O(1) encoding cache for word chunks in Python, reducing tokenization speed of the 7MB corpus from minutes to under 0.5 seconds.</li>
+                    <li><strong>Compression Efficiency</strong>: Compresses 159,225 bytes of text to 65,953 tokens, achieving a **2.41x compression ratio** (bytes per token).</li>
+                    <li><strong>Context Expansion</strong>: A block size of 128 tokens covers approximately **309 bytes of text** (a 2.4x expansion over the baseline context window).</li>
+                    <li><strong>Lossless Guarantee</strong>: A byte-level fallback handles unseen UTF-8 character bytes dynamically, ensuring the model never encounters out-of-vocabulary crashes on test data.</li>
+                    <li><strong>Encoding Cache</strong>: Storing tokenized word chunks in an O(1) cache speeds up corpus preprocessing from minutes to under 0.5 seconds.</li>
                 </ul>
             </div>
 
             <!-- Training Recipe -->
             <div class="card grid-full">
-                <h2>Improved Optimization Recipe</h2>
-                <p>The baseline trained with a small batch size (8) and constant learning rate. We implemented a modern training recipe:</p>
+                <h2>Training Recipe & Hyperparameters</h2>
+                <p>The model is trained with an optimized configuration designed to maximize data consumption and convergence speed within 2,000 steps:</p>
                 <ul>
-                    <li><strong>AdamW with Separated Weight Decay</strong>: Split parameters so that 2D weight matrices receive <code>weight_decay = 0.1</code>, while 1D normalization parameters and embeddings receive <code>0.0</code>.</li>
-                    <li><strong>Cosine LR Schedule with Linear Warmup</strong>: Warmup for 100 steps followed by cosine decay. This allowed us to train with a 5x higher peak learning rate (1.5e-3) than the baseline (3e-4) without divergence, leading to rapid convergence.</li>
-                    <li><strong>Gradient Norm Clipping</strong>: Clipped gradient norms at 1.0 to prevent gradient explosions.</li>
-                    <li><strong>Batch Size Expansion</strong>: Scaled batch size to 32. Across 2,000 steps, the model trained on 8,192,000 tokens (4x more than the baseline), utilizing vectorized matrix operations on multiple CPU cores.</li>
+                    <li><strong>AdamW Optimizer</strong>: Weight decay (0.1) is applied only to 2D weight matrices (excluding 1D norm parameters and embedding matrices).</li>
+                    <li><strong>Cosine Decay with Warmup</strong>: The learning rate ramps up linearly for 100 steps from 0 to a peak value of 1.5e-3, then decays in a cosine curve to a minimum value of 1.5e-4 by step 2,000.</li>
+                    <li><strong>Gradient Clipping</strong>: Gradients are clipped at a max norm of 1.0 to prevent optimization instability.</li>
+                    <li><strong>Batch Size</strong>: The batch size is increased to 32, allowing the model to train on 8.19 million tokens (over 2.8 epochs) in under 15 minutes of CPU execution.</li>
                 </ul>
             </div>
 
-            <!-- Human vs Machine Contribution -->
+            <!-- Checkpoint Implementation Details -->
             <div class="card grid-full">
-                <h2>Human-Machine Pair Programming</h2>
-                <p>This speedrun was an iterative collaboration between the human pair programmer and the AI coding agent:</p>
-                
-                <div class="contrib-split">
-                    <div class="contrib-card">
-                        <h3 class="human">👨‍💻 Human Guidance & Alignment</h3>
-                        <ul>
-                            <li><strong>Strategic Parameter Protection</strong>: Discovered that if the grader counts parameters directly from the checkpoint state dict, tied weights would be counted twice, causing disqualification. Guided the agent to implement custom checkpoint stripping.</li>
-                            <li><strong>Vocabulary Budgeting</strong>: Led the analysis of vocabulary sizes (1024 vs 2048 vs 4096) to balance embedding parameters with block depths.</li>
-                            <li><strong>Pre-tokenization Review</strong>: Aligned on the regex splitting rules (handling alphanumeric S, L, N, O classes) to ensure lossless roundtrip constraints.</li>
-                            <li><strong>Training Blueprint</strong>: Outlined the learning rate schedule, decay recipe, and batch size guidelines.</li>
-                        </ul>
-                    </div>
-
-                    <div class="contrib-card">
-                        <h3 class="machine">🤖 Machine Implementation & Verification</h3>
-                        <ul>
-                            <li><strong>Mathematical Formulations</strong>: Coded the Rotary Position Embeddings (RoPE) complex matrix rotation vectors on the fly for arbitrary sequence lengths.</li>
-                            <li><strong>Performance Optimizations</strong>: Wrote the O(1) chunk-level caching mechanism in <code>tokenizer.py</code>, preventing Python encoding loops from bottlenecking training.</li>
-                            <li><strong>Checkpoint State Dict Interception</strong>: Implemented the custom <code>load_state_dict</code> override in <code>model.py</code> to dynamically re-tie weights on evaluation.</li>
-                            <li><strong>Benchmarking & Verification</strong>: Proactively benchmarked step speeds and verified checkpoint sizes at each step of the optimization loop.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Checkpoint Code Snippet -->
-            <div class="card grid-full">
-                <h2>Checkpoint Parameter Safeguard Implementation</h2>
-                <p>To prevent double-counting of tied weights in the checkpoint file, we override <code>load_state_dict</code> and strip the weight on save:</p>
-                <pre><span class="comment"># Inside model.py (GPT class)</span>
+                <h2>Parameter Deduplication Implementation</h2>
+                <p>To ensure strict parameter limit compliance when counting directly from the state dict keys of the checkpoint file, the redundant tied weight matrix is stripped during serialization and restored on load:</p>
+                <pre><span class="comment"># Overridden in model.py (GPT class)</span>
 <span class="keyword">def</span> <span class="function">load_state_dict</span>(self, state_dict, strict=True):
     <span class="keyword">if</span> self.cfg.tie_weights <span class="keyword">and</span> <span class="string">"head.weight"</span> <span class="keyword">not in</span> state_dict:
         state_dict = state_dict.copy()
         state_dict[<span class="string">"head.weight"</span>] = state_dict[<span class="string">"tok_emb.weight"</span>]
     <span class="keyword">return</span> <span class="function">super</span>().load_state_dict(state_dict, strict=strict)
 
-<span class="comment"># Inside train.py (Saving checkpoint)</span>
+<span class="comment"># Implemented in train.py (Checkpoint saving)</span>
 state_dict = model.state_dict()
 <span class="keyword">if</span> cfg.tie_weights:
     state_dict = {k: v <span class="keyword">for</span> k, v <span class="keyword">in</span> state_dict.items() <span class="keyword">if</span> k != <span class="string">"head.weight"</span>}
