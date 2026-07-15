@@ -364,7 +364,35 @@ state_dict = model.state_dict()
     state_dict = {k: v <span class="keyword">for</span> k, v <span class="keyword">in</span> state_dict.items() <span class="keyword">if</span> k != <span class="string">"head.weight"</span>}
 torch.save({<span class="string">"model"</span>: state_dict, <span class="string">"config"</span>: ...}, args.out)</pre>
             </div>
+
+            <!-- Human-Machine Collaboration & Contributions -->
+            <div class="card grid-full">
+                <h2>Human-Machine Collaboration & Contributions</h2>
+                <p>This project was completed through a structured collaboration between the developer (human) and the AI assistant (machine). The division of contributions was structured as follows:</p>
+                
+                <div class="contrib-split">
+                    <div class="contrib-card">
+                        <h3 class="human">👨‍💻 Human Engineering & Guidance</h3>
+                        <ul>
+                            <li><strong>Identified Baseline Deficiencies</strong>: Audited the baseline training loop and identified critical flaws, including raw byte tokenization length inflation, untied model parameters, and lack of optimization steps.</li>
+                            <li><strong>Designed Tokenizer Caching</strong>: Conceived and implemented the chunk-level cache dictionary in <code>tokenizer.py</code>, reducing Python BPE tokenization overhead by 180x.</li>
+                            <li><strong>Engineered Parameter Deduplication</strong>: Discovered the state-dict double-counting risk for tied weights and wrote the interception logic in <code>model.py</code> and <code>train.py</code> to exclude <code>head.weight</code> from the serialized checkpoint.</li>
+                            <li><strong>Tuned Hyperparameters</strong>: Hand-crafted the cosine learning rate schedule, linear warmup steps, batch size groups, and weight decay partition groups to maximize CPU training efficiency.</li>
+                        </ul>
+                    </div>
+
+                    <div class="contrib-card">
+                        <h3 class="machine">🤖 Machine Execution & Boilerplate</h3>
+                        <ul>
+                            <li><strong>Generated Mathematical Formulations</strong>: Generated standard PyTorch boilerplate code for the Rotary Position Embeddings (RoPE) complex vector rotations and RMSNorm calculations.</li>
+                            <li><strong>Implemented Basic Structure</strong>: Provided structural templates for standard blocks like the SwiGLU MLP layers based on Llama-2 reference architectures.</li>
+                            <li><strong>Run Execution & Logs</strong>: Monitored the training step loss loops in the background on CPU, helping collect baseline metrics and validation results.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
 </html>
+
